@@ -74,63 +74,55 @@ public class UserDao implements UserDaoInterfaccia {
 
 
 	@Override
-	public synchronized UserBean doRetrieve(String username, String password) throws SQLException {
-		//preparing some objects for connecNon 
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		
-		UserBean user = new UserBean();
-		
-		String searchQuery = "select * from " + UserDao.TABLE_NAME 
-							+ "	where username = ? "
-							+ " AND pwd = ? ";
-		
-		try
-			{
-			//connect to DB 
-			connection = ds.getConnection();
-			preparedStatement = connection.prepareStatement(searchQuery);
-			preparedStatement.setString(1, username);
-			preparedStatement.setString(2, password);
-			ResultSet rs = preparedStatement.executeQuery();
-			boolean more = rs.next();
-			// if user does not exist set the isValid variable to false
-				if (!more) 
-					user.setValid(false);
-		
-				//if user exists set the isValid variable to true
-				else if (more) 
-				{
-					user.setUsername(rs.getString("username"));
-					user.setPassword(rs.getString("pwd"));
-					user.setEmail(rs.getString("email"));
-					user.setNome(rs.getString("nome"));
-					user.setCognome(rs.getString("cognome"));
-					user.setDataDiNascita(rs.getDate("data_nascita"));
-					user.setCartaDiCredito(rs.getString("carta_credito"));
-					user.setIndirizzo(rs.getString("indirizzo"));
-					user.setCap(rs.getString("cap"));
-					user.setAmministratore(rs.getBoolean("amministratore"));
-					user.setValid(true);
-				}
-			}
-			catch (Exception ex) 
-			{
-				System.out.println("Log In failed: An Exception has occurred! " + ex); 
-			}
-			finally {
-				try {
-					if (preparedStatement != null)
-							preparedStatement.close();
-					} 
-			finally {
-				if (connection != null)
-					connection.close();
-			}
-	 }
+	public synchronized UserBean doRetrieve(String username, String hashedPassword) throws SQLException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        
+        UserBean user = new UserBean();
+        
+        String searchQuery = "SELECT * FROM " + UserDao.TABLE_NAME 
+                             + " WHERE username = ? AND pwd = ?";
+        
+        try {
+            // Connect to DB 
+            connection = ds.getConnection();
+            preparedStatement = connection.prepareStatement(searchQuery);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, hashedPassword);
+            ResultSet rs = preparedStatement.executeQuery();
+            boolean more = rs.next();
 
-		return user;
-	}
+            // If user does not exist set the isValid variable to false
+            if (!more) {
+                user.setValid(false);
+            } else if (more) {
+                // If user exists set the isValid variable to true
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("pwd")); // This is the hashed password
+                user.setEmail(rs.getString("email"));
+                user.setNome(rs.getString("nome"));
+                user.setCognome(rs.getString("cognome"));
+                user.setDataDiNascita(rs.getDate("data_nascita"));
+                user.setCartaDiCredito(rs.getString("carta_credito"));
+                user.setIndirizzo(rs.getString("indirizzo"));
+                user.setCap(rs.getString("cap"));
+                user.setAmministratore(rs.getBoolean("amministratore"));
+                user.setValid(true);
+            }
+        } catch (Exception ex) {
+            System.out.println("Log In failed: An Exception has occurred! " + ex); 
+        } finally {
+            try {
+                if (preparedStatement != null)
+                    preparedStatement.close();
+            } finally {
+                if (connection != null)
+                    connection.close();
+            }
+        }
+
+        return user;
+    }
 	
 	@Override
 	public synchronized ArrayList<UserBean> doRetrieveAll(String order) throws SQLException {
@@ -240,6 +232,30 @@ public class UserDao implements UserDaoInterfaccia {
 			}
 		}
 	}
+	
+	public synchronized void updateUserPassword(UserBean user) throws SQLException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
 
-	}
+        String updateQuery = "UPDATE " + TABLE_NAME + " SET pwd = ? WHERE username = ?";
+
+        try {
+            connection = ds.getConnection();
+            preparedStatement = connection.prepareStatement(updateQuery);
+            preparedStatement.setString(1, user.getPassword());
+            preparedStatement.setString(2, user.getUsername());
+            preparedStatement.executeUpdate();
+        } finally {
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } finally {
+                if (connection != null) {
+                    connection.close();
+                }
+            }
+        }
+    }
+}
 

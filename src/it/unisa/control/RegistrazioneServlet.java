@@ -1,9 +1,9 @@
 package it.unisa.control;
 
 import java.io.IOException;
+
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import it.unisa.model.*;
+import utils.*;
 
 /**
  * Servlet implementation class RegistraziomeServlet
@@ -27,39 +28,39 @@ public class RegistrazioneServlet extends HttpServlet {
 
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		UserDao dao = new UserDao();
-		String nome = request.getParameter("nome");
-		String cognome = request.getParameter("cognome");
-		String email = request.getParameter("email");
-		String dataNascita = request.getParameter("nascita");
-		String username = request.getParameter("us");
-		String pwd = request.getParameter("pw");
+	    UserDao dao = new UserDao();
+	    String nome = request.getParameter("nome");
+	    String cognome = request.getParameter("cognome");
+	    String email = request.getParameter("email");
+	    String dataNascita = request.getParameter("nascita");
+	    String username = request.getParameter("us");
+	    String pwd = request.getParameter("pw");
 
-        String[] parti = dataNascita.split("-");
-        dataNascita = parti[2] + "-" + parti[1] + "-" + parti[0];
-		
-		try {
-			
-			UserBean user = new UserBean();
-			user.setNome(nome);
-			user.setCognome(cognome);
-			user.setEmail(email);
-			user.setDataDiNascita(Date.valueOf(dataNascita));
-			user.setUsername(username);
-			user.setPassword(pwd);
-			user.setAmministratore(false);
-			user.setCap(null);
-			user.setIndirizzo(null);
-			user.setCartaDiCredito(null);
-			dao.doSave(user);
-			
-		}catch(SQLException e) {
-			System.out.println("Error:" + e.getMessage());
-		}
-				
-		response.sendRedirect(request.getContextPath() + "/Home.jsp");
+	    // Hash the password
+	    String hashedPassword = PasswordUtils.hashPassword(pwd);
 
+	    String[] parti = dataNascita.split("-");
+	    dataNascita = parti[2] + "-" + parti[1] + "-" + parti[0];
+
+	    try {
+	        UserBean user = new UserBean();
+	        user.setNome(nome);
+	        user.setCognome(cognome);
+	        user.setEmail(email);
+	        user.setDataDiNascita(Date.valueOf(dataNascita));
+	        user.setUsername(username);
+	        user.setPassword(hashedPassword); // Store the hashed password
+	        user.setAmministratore(false);
+	        user.setCap(null);
+	        user.setIndirizzo(null);
+	        user.setCartaDiCredito(null);
+	        dao.doSave(user);
+
+	    } catch (SQLException e) {
+	        System.out.println("Error:" + e.getMessage());
+	    }
+
+	    response.sendRedirect(request.getContextPath() + "/Home.jsp");
 	}
 
 }
