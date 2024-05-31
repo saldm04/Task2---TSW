@@ -19,9 +19,5 @@
         <exception-type>java.lang.Throwable</exception-type>
         <location>/error500.jsp</location>
     </error-page>
-    
-    <listener>
-    	<listener-class>utils.PasswordMigrationContextListener</listener-class>
-	</listener>
 	
 </web-app>

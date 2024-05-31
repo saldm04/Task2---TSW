@@ -36,7 +36,6 @@ public class LoginServlet extends HttpServlet {
 	        // Hash the input password
 	        String hashedPassword = PasswordUtils.hashPassword(request.getParameter("pw"));
 	        user.setPassword(hashedPassword);
-	        
 	        user = usDao.doRetrieve(request.getParameter("un"), hashedPassword);
 	        
 	        String checkout = request.getParameter("checkout");
