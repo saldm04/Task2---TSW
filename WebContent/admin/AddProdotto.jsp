@@ -5,7 +5,7 @@
 <head>
 <meta charset="ISO-8859-1">
 	<link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet" type="text/css">
-
+	<script src="${pageContext.request.contextPath}/script/sanitizeInput.js"></script>
 <title>Aggiungi prodotto</title>
 </head>
 <body>
