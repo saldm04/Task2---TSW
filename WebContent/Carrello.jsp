@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="java.util.*,it.unisa.model.*" %>
+    pageEncoding="ISO-8859-1" import="java.util.*, it.unisa.model.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,8 +38,8 @@
 					<input type="hidden" name="Id" value="<%=itemcart.getId()%>">
 					<input type="hidden" name="page" value="Carrello.jsp">
 					<select name="qnt" id="qnt">
-						<%for(int i = 0; i < itemcart.getProdotto().getQuantità();i++) {%>
-						<option value="<%=i+1%>" <%if( (i+1)==itemcart.getQuantitàCarrello()){ %> selected="selected" <%} %>> <%=i+1%> </option> <%} %>
+						<%for(int i = 0; i < itemcart.getProdotto().getQuantita();i++) {%>
+						<option value="<%=i+1%>" <%if( (i+1)==itemcart.getQuantitaCarrello()){ %> selected="selected" <%} %>> <%=i+1%> </option> <%} %>
 						
 					</select>
 					<input type="submit" value="update">
